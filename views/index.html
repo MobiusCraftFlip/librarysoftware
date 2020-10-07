@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+    <head> 
+        <!-- CSS only -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <!-- JS, Popper.js, and jQuery -->
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+        <link rel="stylesheet" href="index.css">
+
+        <!-- Form js -->
+        <script src="/index.js"></script>
+
+        <style>
+            .ghost {
+                visibility: hidden;
+                height: 0px;
+            }
+
+        </style>
+
+        
+    </head>
+
+    <div class="ghost" id="defaultBook">
+
+        <label for="name">Name: </label>
+        <p id="name"> </p>
+
+        <label for="">Authors: </label>
+
+        <div>
+        </div>
+        <label for="isbn_10">ISBN 10: </label>
+        <p id="isbn_10"></p>
+
+        <label for="isbn_13">ISBN 13: </label>
+        <p id="isbn_13"></p>
+    </div>
+
+    <body>
+        <div class="container" style="padding: 20px">
+            <div class="row">
+                <div class="col-sm">
+                    <h2>Create User</h2>
+                    <form id="createUserForm"> <!--   action="/api/createUser" method="post" -->
+                        <label for="username">Username:</label> <br>
+                        <input type="text" id="username" name="username"><br>
+                        <label for="fname">First name:</label> <br>
+                        <input type="text" id="fname" name="fname"> <br>
+                        <label for="lname">Last name:</label> <br>
+                        <input type="lext" id="lname" name="lname"> <br>
+                        <br>
+                        <input type="button" onclick="createUserForm()" value="Submit">
+                    </form>
+                    <p id="createUserFormMessage"> </p>
+                </div>
+                <div class="col-sm">
+                    <h2>Give Book</h2>
+                    <form id="giveBookForm" onsubmit="return giveBookForm()">  <!--  action="/api/giveBook" method="post"  -->
+
+                        <label for="username">Username:</label><br>
+                        <input type="text" id="username" name="username"><br>
+
+                        <label for="isbn">Isbn:</label><br>
+                        <input type="number" id="isbn" name="isbn"><br>
+                        <br>
+                        <input type="button" onclick="giveBookForm()" value="Submit">
+                    </form>
+                </div>
+
+                <div class="col-sm">
+                    <h2>Remove Book</h2>
+                    <form id="removeBookForm">  <!-- action="/api/removeBook" method="post"  -->
+
+                        <label for="username">Username:</label><br>
+                        <input type="text" id="username" name="username"><br>
+
+                        <label for="isbn">Isbn:</label><br>
+                        <input type="number" id="isbn" name="isbn"><br>
+                        <br>
+                        <input type="button" onclick="removeBookForm()" value="Submit">
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm">
+                    <h2>Get User</h2>
+                    <form id="getUserForm">  <!-- action="/api/removeBook" method="post"  -->
+
+                        <label for="username">Username:</label><br>
+                        <input type="text" id="username" name="username"><br>
+                        <br>
+                        <input type="button" onclick="getUserForm()" value="Submit">
+                    </form>
+                    <div class="container" id="getUserFormMessage"> <br>
+                        <label for="getUserFormMessageUsername">Username: </label>
+                        <p id="getUserFormMessageUsername"> </p>
+                        <label for="getUserFormMessageFname">First Name: </label>
+                        <p id="getUserFormMessageFname"> </p>
+                        <label for="getUserFormMessageLname">First Name: </label>
+                        <p id="getUserFormMessageLname"> </p>
+                        
+                        <p>Books:</p><br>
+                        <div id="getUserFormMessageBooks">
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
