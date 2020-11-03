@@ -4,7 +4,16 @@ function removeAllChildNodes(parent) {
     }
 }
 
+var deleteUserUsername
+
+let cooldown = 2000
+let lastClick = 0
 function createUserForm() {
+    if (lastClick >= (Date.now() - cooldown)) {
+        return;
+    }
+    lastClick = Date.now();
+
     var xhttp = new XMLHttpRequest();
 
     var username = document.getElementById("createUserForm")["username"].value
@@ -12,8 +21,11 @@ function createUserForm() {
     var lname = document.getElementById("createUserForm")["lname"].value
     console.log("creating user")
     xhttp.onreadystatechange = function() {
+        console.log(this)
         if (this.readyState == 4 && this.status == 200) {
             document.getElementById("createUserFormMessage").innerHTML = `Created user with Username: ${username}`;
+        } else if (this.readyState == 4 && this.status == 400) {
+            document.getElementById("createUserFormMessage").innerHTML = `Duplicate users not allowed`;
         }
     };
 
@@ -23,6 +35,10 @@ function createUserForm() {
 }
 
 function giveBookForm() {
+    if (lastClick >= (Date.now() - cooldown)) {
+        return;
+    }
+    lastClick = Date.now();
     var xhttp = new XMLHttpRequest();
 
     var username = document.getElementById("giveBookForm")["username"].value
@@ -30,7 +46,9 @@ function giveBookForm() {
     console.log("giving book to user")
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-            // document.getElementById("giveBookForm").innerHTML = `Created user with Username: ${username}`;
+            document.getElementById("giveBookFormMessage").innerHTML = `Given book to user: ${username} ISBN: ${isbn}`;
+        } else if (this.readyState == 4 && this.status == 400) {
+            document.getElementById("giveBookFormMessage").innerHTML = `-_- ONLY NUMBERS U FOOL`;
         }
     };
 
@@ -40,6 +58,10 @@ function giveBookForm() {
 }
 
 function removeBookForm() {
+    if (lastClick >= (Date.now() - cooldown)) {
+        return;
+    }
+    lastClick = Date.now();
 
     var xhttp = new XMLHttpRequest();
 
@@ -48,7 +70,9 @@ function removeBookForm() {
     console.log("removing book from user")
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-            // document.getElementById("giveBookForm").innerHTML = `Created user with Username: ${username}`;
+            document.getElementById("giveBookFormMessage").innerHTML = `Given book to ${username} with isbn: ${isbn}`;
+        } else if (this.status == 400) {
+            document.getElementById("giveBookFormMessage").innerHTML = `-_- only numbers`;
         }
     };
 
@@ -59,7 +83,10 @@ function removeBookForm() {
 }
 
 function getUserForm() {
-
+    if (lastClick >= (Date.now() - cooldown)) {
+        return;
+    }
+    lastClick = Date.now();
     var xhttp = new XMLHttpRequest();
 
     var username = document.getElementById("getUserForm")["username"].value
@@ -156,5 +183,75 @@ function getUserForm() {
     xhttp.open("POST", "/api/getUser", true);
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
     xhttp.send(`username=${username}`);
+    
+}
+
+function delteUserForm() {
+    if (lastClick >= (Date.now() - cooldown)) {
+        return;
+    }
+    lastClick = Date.now();
+    var xhttp = new XMLHttpRequest();
+
+    var username = document.getElementById("delteUserForm")["username"].value
+    console.log("removing user part 1")
+    xhttp.onreadystatechange = function() {
+
+        
+        if (this.readyState == 4 && this.status == 200) {
+
+            const json = JSON.parse(this.responseText)
+
+            if (json[0] == undefined) {
+                return
+            }
+            const username = json[0].username;
+            deleteUserUsername = username
+            const fname = json[0].fname;
+            const lname = json[0].lname;
+            const numberOfBooksOut = json[0].books.length
+
+            document.getElementById("delteUserFormOutput").className = `container`;
+            document.getElementById("delteUserFormOutputAreYouSure").innerHTML = `Are you sure you want to delete user with name: ${fname} ${lname} and username: ${username}. That user has ${numberOfBooksOut} books out`;
+        } else if (this.readyState == 4 && this.status == 400) {
+            throw new error()
+        }
+    };
+
+    xhttp.open("POST", "/api/getUser", true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+    xhttp.send(`username=${username}`);
+}
+
+function deleteUserNo() {
+    if (lastClick >= (Date.now() - cooldown)) {
+        return;
+    }
+    lastClick = Date.now();
+    var deleteUserUsername = null
+    document.getElementById("delteUserFormOutput").className = `ghost`;
+}
+function deleteUserSure() {
+    if (lastClick >= (Date.now() - cooldown)) {
+        return;
+    }
+    lastClick = Date.now();
+    
+    var xhttp = new XMLHttpRequest();
+
+    console.log("deleting user")
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("delteUserFormMessage").innerHTML = `Deleted user with username: ${deleteUserUsername}`;
+        } else if (this.readyState == 4) {
+            throw new error()
+            document.getElementById("delteUserFormMessage").innerHTML = `An error occured http code ${this.status}`;
+        }
+    };
+    console.log(deleteUserUsername)
+
+    xhttp.open("POST", "/api/deleteUser", true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+    xhttp.send(`username=${deleteUserUsername}`);
     
 }

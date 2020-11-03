@@ -3,6 +3,7 @@ interface author {
 }
 
 export interface bookType {
+    _id: string,
     name: string
     authors: string[]
     isbn10: number

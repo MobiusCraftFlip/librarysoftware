@@ -1,0 +1,1 @@
+Create dupleculate user => Stop more than one user with same username

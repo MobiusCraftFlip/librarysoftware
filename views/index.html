@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
     <head> 
+        <link rel="icon" href="/favicon.ico">
         <!-- CSS only -->
+
+        <title>LibrarySoftware</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
         <!-- JS, Popper.js, and jQuery -->
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
@@ -69,6 +72,7 @@
                         <br>
                         <input type="button" onclick="giveBookForm()" value="Submit">
                     </form>
+                    <p id="giveBookFormMessage"> </p>
                 </div>
 
                 <div class="col-sm">
@@ -109,6 +113,24 @@
 
                         </div>
                     </div>
+                </div>
+                <div class="col-sm">
+                    <h2>Delete User</h2>
+                    <form id="delteUserForm">  <!-- action="/api/removeBook" method="post"  -->
+
+                        <label for="username">Username:</label><br>
+                        <input type="text" id="username" name="username"><br>
+                        <br>
+                        <input type="button" onclick="delteUserForm()" value="Submit">
+                        <div class="ghost" id="delteUserFormOutput">
+                            <p id="delteUserFormOutputAreYouSure" name="areYouSure"></p>
+                            <button type="button" onclick="deleteUserSure()" value="Yes">Yes</button>
+                            <button type="button" onclick="deleteUserNo()" value="No">No</button>
+                        </div>
+                        <p id="delteUserFormMessage">
+                            
+                        </p>
+                    </form>
                 </div>
             </div>
         </div>
