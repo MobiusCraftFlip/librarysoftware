@@ -102,3 +102,6 @@ dist
 
 # TernJS port file
 .tern-port
+
+# GitPod
+.bc1a4d1a-04ed-45ea-ac18-78163b6fdb6c.tar
