@@ -86,6 +86,7 @@
                         <input type="number" id="isbn" name="isbn"><br>
                         <br>
                         <input type="button" onclick="removeBookForm()" value="Submit">
+                        <p id="removeBookFormMessage"></p>
                     </form>
                 </div>
             </div>
@@ -128,6 +129,19 @@
                             <button type="button" onclick="deleteUserNo()" value="No">No</button>
                         </div>
                         <p id="delteUserFormMessage">
+                            
+                        </p>
+                    </form>
+                </div>
+                <div class="col-sm">
+                    <h2>Get Users With book</h2>
+                    <form id="GetusersWithBookForm">  <!-- action="/api/removeBook" method="post"  -->
+
+                        <label for="isbn">Isbn:</label><br>
+                        <input type="number" id="GetusersWithBookFormIsbn" name="isbn"><br>
+                        <br>
+                        <input type="button" onclick="GetusersWithBookForm()" value="Submit">
+                        <p id="GetusersWithBookFormMessage">
                             
                         </p>
                     </form>

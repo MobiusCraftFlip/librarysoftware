@@ -15,14 +15,14 @@
     "typescript": "^4.0.3"
   },
   "scripts": {
-    "nodemon": "nodemon tsc",
-    "run": "tsc && node index.js"
+    "nodemon": "nodemon index.js",
+    "run": "node index.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MobiusCraftFlip/librarysoftware.git"
   },
-  "engines": { 
+  "engines": {
     "node": "12.x"
   },
   "keywords": [],

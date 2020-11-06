@@ -12,18 +12,19 @@ MongoClient.connect(process.env.mongodburi, (err, db) => {
     dbo = db.db("ddlibrary");
     console.log("connected to database");
 
-    const isbn = 1405524081
+    const isbn = 9780765375650
     fetch("https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn)
     
     .then(function (res) { return res.json(); })
     .then(function (json) {
         
         if (json.items[0].id != "t5rgAAAAMAAJ") {
-            var isbn_13 = json.items[0].volumeInfo.industryIdentifiers[1].identifier;
-            var isbn_10 = json.items[0].volumeInfo.industryIdentifiers[0].identifier;
+            var isbn_13 = json.items[0].volumeInfo.industryIdentifiers.find(element => element.type == "ISBN_13").identifier;
+            var isbn_10 = json.items[0].volumeInfo.industryIdentifiers.find(element => element.type == "ISBN_10").identifier;
             var name = json.items[0].volumeInfo.title;
             var authors = json.items[0].volumeInfo.authors;
             var id = json.items[0].id
+            
 
             
 
@@ -34,17 +35,20 @@ MongoClient.connect(process.env.mongodburi, (err, db) => {
             bookBody.isbn_10 = isbn_10
             bookBody.isbn_13 = isbn_13
             bookBody._id = id
+            console.log(bookBody)
 
-            let query = dbo.collection("users").find(
-                {
-                    books: {
-                        "$in": bookBody
-                    }
+            let query = dbo.collection("users").find({
+                books: {
+                    "$in":[
+                        bookBody
+                    ]
                 }
-            )
-            
-
-            console.log(query)
+            })
+                .toArray(function(err, result) {
+                    if (err) throw err;
+                    console.log(result);
+                    db.close();
+                })
         } else {
             return res.status(400).send(`-_- only numbers`);
         }

@@ -21,7 +21,6 @@ function createUserForm() {
     var lname = document.getElementById("createUserForm")["lname"].value
     console.log("creating user")
     xhttp.onreadystatechange = function() {
-        console.log(this)
         if (this.readyState == 4 && this.status == 200) {
             document.getElementById("createUserFormMessage").innerHTML = `Created user with Username: ${username}`;
         } else if (this.readyState == 4 && this.status == 400) {
@@ -49,7 +48,9 @@ function giveBookForm() {
             document.getElementById("giveBookFormMessage").innerHTML = `Given book to user: ${username} ISBN: ${isbn}`;
         } else if (this.readyState == 4 && this.status == 400) {
             document.getElementById("giveBookFormMessage").innerHTML = `-_- ONLY NUMBERS U FOOL`;
-        }
+        } else if (this.readyState == 4 && this.status == 500) {
+            document.getElementById("giveBookFormMessage").innerHTML = "An error has Occured"
+        } 
     };
 
     xhttp.open("POST", "/api/giveBook", true);
@@ -70,10 +71,12 @@ function removeBookForm() {
     console.log("removing book from user")
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-            document.getElementById("giveBookFormMessage").innerHTML = `Given book to ${username} with isbn: ${isbn}`;
+            document.getElementById("removeBookFormMessage").innerHTML = `Given book to ${username} with isbn: ${isbn}`;
         } else if (this.status == 400) {
-            document.getElementById("giveBookFormMessage").innerHTML = `-_- only numbers`;
-        }
+            document.getElementById("removeBookFormMessage").innerHTML = `-_- only numbers`;
+        } else if (this.readyState == 4 && this.status == 500) {
+            document.getElementById("removeBookFormMessage").innerHTML = "An error has Occured"
+        } 
     };
 
     xhttp.open("POST", "/api/removeBook", true);
@@ -137,7 +140,6 @@ function getUserForm() {
                 container.appendChild(authorLabel)
                 
                 for (rauthor in json[0].books[rbook].authors) {
-                    console.log(json[0].books[rbook].authors)
 
                     var author = json[0].books[rbook].authors[rauthor]
                     var authorText = document.createElement("p")
@@ -248,10 +250,158 @@ function deleteUserSure() {
             document.getElementById("delteUserFormMessage").innerHTML = `An error occured http code ${this.status}`;
         }
     };
-    console.log(deleteUserUsername)
 
     xhttp.open("POST", "/api/deleteUser", true);
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
     xhttp.send(`username=${deleteUserUsername}`);
     
 }
+
+function GetusersWithBookForm() {
+    if (lastClick >= (Date.now() - cooldown)) {
+        return;
+    }
+    lastClick = Date.now();
+
+    var isbn = document.getElementById("GetusersWithBookFormIsbn").value
+    
+    var xhttp = new XMLHttpRequest();
+
+    console.log("GetingUsersWithBook")
+    xhttp.onreadystatechange = function() {
+
+        
+        if (this.readyState == 4 && this.status == 200) {
+            
+            var json = JSON.parse(this.responseText)
+            var message = document.getElementById("GetusersWithBookFormMessage")
+            removeAllChildNodes(message)
+            json.forEach(element => {
+                var usercontainer = document.createElement("div")
+                    usercontainer.className = "container"
+                    usercontainer.id = "book"
+                    message.appendChild(usercontainer)
+                
+                // Name of book
+                var userNameLabel = document.createElement("p")
+                    userNameLabel.setAttribute("for","name")
+                    userNameLabel.innerHTML = "UserName:"
+                
+                usercontainer.appendChild(userNameLabel)
+                
+
+                var userNameText = document.createElement("p")
+                    userNameText.setAttribute("for","name")
+                    userNameText.innerHTML = element.username + "\n"
+                
+                usercontainer.appendChild(userNameText)
+
+                // Name of book
+                var fNameLabel = document.createElement("p")
+                    fNameLabel.setAttribute("for","name")
+                    fNameLabel.innerHTML = "First Name:"
+                
+                usercontainer.appendChild(fNameLabel)
+                
+
+                var fNameText = document.createElement("p")
+                    fNameText.setAttribute("for","name")
+                    fNameText.innerHTML = element.fname + "\n"
+                
+                usercontainer.appendChild(fNameText)
+
+                var lNameLabel = document.createElement("p")
+                    lNameLabel.setAttribute("for","name")
+                    lNameLabel.innerHTML = "Last Name:"
+                
+                usercontainer.appendChild(lNameLabel)
+                
+
+                var lNameText = document.createElement("p")
+                    lNameText.setAttribute("for","name")
+                    lNameText.innerHTML = element.lname + "\n"
+                
+                usercontainer.appendChild(lNameText)
+
+                
+                for (rbook in element.books) {
+                    const book = element.books[rbook]
+                    
+                    //  Book Container
+                    var container = document.createElement("div")
+                        container.className = "container"
+                        container.id = "book"
+                        usercontainer.appendChild(container)
+                    
+                    // Name of book
+                    var nameLabel = document.createElement("p")
+                        nameLabel.setAttribute("for","name")
+                        nameLabel.innerHTML = "Book name:"
+                    
+                    container.appendChild(nameLabel)
+                    
+
+                    var nameText = document.createElement("p")
+                        nameText.setAttribute("for","name")
+                        nameText.innerHTML = book.name + "\n"
+
+                    container.appendChild(nameText)
+
+
+                    // Authors of book
+                    var authorLabel = document.createElement("p")
+                        authorLabel.setAttribute("for","name")
+                        authorLabel.innerHTML = "Authors:"
+                    
+                    container.appendChild(authorLabel)
+                    
+                    for (rauthor in json[0].books[rbook].authors) {
+                        var author = json[0].books[rbook].authors[rauthor]
+                        var authorText = document.createElement("p")
+                            authorText.setAttribute("for","name")
+                            authorText.innerHTML = author + "\n"
+                        container.appendChild(authorText)
+                    }
+                    
+
+                    
+
+                    // ISBN_10
+                    var isbn10Label = document.createElement("p")
+                        isbn10Label.setAttribute("for","name")
+                        isbn10Label.innerHTML = "ISBN 10:"
+
+                    container.appendChild(isbn10Label)
+
+                    var isbn10Text = document.createElement("p")
+                        isbn10Text.setAttribute("for","name")
+                        isbn10Text.innerHTML = book.isbn_10 + "\n"
+                    
+                    container.appendChild(isbn10Text)
+
+                    // ISBN_10
+                    var isbn13Label = document.createElement("p")
+                        isbn13Label.setAttribute("for","name")
+                        isbn13Label.innerHTML = "ISBN 13:"
+
+                    container.appendChild(isbn13Label)
+
+                    var isbn13Text = document.createElement("p")
+                        isbn13Text.setAttribute("for","name")
+                        isbn13Text.innerHTML = book.isbn_13 + "\n"
+                    
+                    container.appendChild(isbn13Text)
+                }
+            })
+            
+        } else if (this.readyState == 4 && this.status == 500) {
+            document.getElementById("GetusersWithBookFormMessage").innerHTML = `An error occured http code ${this.status}`;
+        }
+    };
+
+    xhttp.open("POST", "/api/getUserWithBook", true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+    xhttp.send(`isbn=${isbn}`);
+}
+
+            

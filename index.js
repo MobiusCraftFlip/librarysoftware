@@ -41,9 +41,7 @@ app.post("/api/createUser", async function (req, res) {
         } else {
             res.status(400).send("Duplicate users not allowed")
         }
-    });
-
-    
+    })
 });
 
 app.post("/api/giveBook", function (req, res) {
@@ -56,11 +54,15 @@ app.post("/api/giveBook", function (req, res) {
     
         .then(function (res) { return res.json(); })
         .then(function (json) {
-            console.log(json.items[0])
-            console.log(typeof(json.items[0]))
+            if (json.items == undefined) { 
+                return res.status(500).send()
+            }
+            if (json.items[0] == undefined) { 
+                return res.status(500).send()
+            }
             if (json.items[0].id != "t5rgAAAAMAAJ") {
-                var isbn_13 = json.items[0].volumeInfo.industryIdentifiers[1].identifier;
-                var isbn_10 = json.items[0].volumeInfo.industryIdentifiers[0].identifier;
+                var isbn_13 = json.items[0].volumeInfo.industryIdentifiers.find(element => element.type == "ISBN_13").identifier;
+                var isbn_10 = json.items[0].volumeInfo.industryIdentifiers.find(element => element.type == "ISBN_10").identifier;
                 var name = json.items[0].volumeInfo.title;
                 var authors = json.items[0].volumeInfo.authors;
                 var id = json.items[0].id
@@ -86,6 +88,7 @@ app.post("/api/giveBook", function (req, res) {
                 return res.status(400).send(`-_- only numbers`);
             }
         }
+        
     ); 
 });
 
@@ -97,13 +100,16 @@ app.post(`/api/removeBook`, (req,res) => {
     fetch("https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn)
         .then(function (res) { return res.json(); })
         .then(function (json) {
-
-            if (json.items[0] == undefined) { 
-                return res.status(300).send()
+            if (json.items == undefined) { 
+                return res.status(500).send()
             }
+            if (json.items[0] == undefined) { 
+                return res.status(500).send()
+            }
+            console.log(json.items[0].volumeInfo.industryIdentifiers)
 
-            var isbn_13 = json.items[0].volumeInfo.industryIdentifiers[1].identifier;
-            var isbn_10 = json.items[0].volumeInfo.industryIdentifiers[0].identifier;
+            var isbn_13 = json.items[0].volumeInfo.industryIdentifiers.find(element => element.type == "ISBN_13").identifier;
+            var isbn_10 = json.items[0].volumeInfo.industryIdentifiers.find(element => element.type == "ISBN_10").identifier;
             var name = json.items[0].volumeInfo.title;
             var authors = json.items[0].volumeInfo.authors;
             var username = {
@@ -134,7 +140,8 @@ app.post("/api/getUser", (req, res) => {
     dbo.collection("users").find({username: req.body.username.toLowerCase()}).toArray(function(err, result) {
         if (err) throw err;
         res.send(result);
-  });
+  })
+  
 })
 
 app.post("/api/deleteUser", (req,res) => {
@@ -144,45 +151,60 @@ app.post("/api/deleteUser", (req,res) => {
     }).then((z) => {
         console.log(z)
     }).catch(err => {
+        res.status(500).send()
         throw(err)
     })
     res.send("test")
 })
 
-app.post("/api/getUserWithBook", async (req,res) => {
+app.post("/api/getUserWithBook", (req,res) => {
     const isbn = req.body.isbn
-    const myFetch = await fetch("https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn)
-    console.log(myFetch)
-    const json = myFetch.Response
+    fetch("https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn)
 
-    var isbn_13 = json[0].volumeInfo.industryIdentifiers[1].identifier;
-    var isbn_10 = json[0].volumeInfo.industryIdentifiers[0].identifier;
-    var name = json[0].volumeInfo.title;
-    var authors = json[0].volumeInfo.authors;
-    var id = json[0].id
-
-    var username = {
-        username: req.body.username.toLowerCase()
-    };
-
-    var bookBody = {};
-
-    bookBody = { books: { } }
-
-    bookBody.books.name = name
-    bookBody.books.authors = authors
-    bookBody.books.isbn_10 = isbn_10
-    bookBody.books.isbn_13 = isbn_13
-    bookBody.books._id = id
-
-    let query = await dbo.collection("users").find(
-        {
-            books: {
-                "$in": bookBody
-            }
+    .then(function (res) { return res.json(); })
+    .then(function (json) {
+        if (json.items == undefined) { 
+            return res.status(500).send()
         }
-    )
-    res.status(200).send(query)
+        if (json.items[0] == undefined) { 
+            return res.status(500).send()
+        }
+        if (json.items[0].id != "t5rgAAAAMAAJ") {
+            var isbn_13 = json.items[0].volumeInfo.industryIdentifiers.find(element => element.type == "ISBN_13").identifier;
+            var isbn_10 = json.items[0].volumeInfo.industryIdentifiers.find(element => element.type == "ISBN_10").identifier;
+            var name = json.items[0].volumeInfo.title;
+            var authors = json.items[0].volumeInfo.authors;
+            var id = json.items[0].id
+            
+
+            
+
+            var bookBody = {};
+
+            bookBody.name = name
+            bookBody.authors = authors
+            bookBody.isbn_10 = isbn_10
+            bookBody.isbn_13 = isbn_13
+            bookBody._id = id
+            console.log(bookBody)
+
+            let query = dbo.collection("users").find({
+                books: {
+                    "$in":[
+                        bookBody
+                    ]
+                }
+            })
+                .toArray(function(err, result) {
+                    if (err) throw err;
+                    console.log(result);
+                    res.status(200).send(result)
+                })
+        } else {
+            return res.status(400).send(`-_- only numbers`);
+        }
+    })
+    
 })
 
 app.listen(3000);
