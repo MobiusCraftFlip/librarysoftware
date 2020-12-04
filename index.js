@@ -1,13 +1,14 @@
-require('dotenv').config(); // DOTENV
+//require('dotenv').config(); // DOTENV
 // REQUIRES
 var express = require("express");
 var bodyParser = require('body-parser');
 var fetch = require("node-fetch");
 //  DATABASE
+const uri = ""
 var MongoClient = require('mongodb').MongoClient;
-var client = new MongoClient(process.env.mongodburi, { useNewUrlParser: true, useUnifiedTopology: true });
+var client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 var dbo;
-MongoClient.connect(process.env.mongodburi, function (err, db) {
+MongoClient.connect(uri, function (err, db) {
     if (err)
         throw err;
     dbo = db.db("ddlibrary");
